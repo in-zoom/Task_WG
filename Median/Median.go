@@ -2,39 +2,24 @@ package Median
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"log"
 )
 
-type cats struct {
-	medianTail     float32
-	medianWhiskers float32
-}
-
-func Median(db *sql.DB) {
-	rows, err := db.Query("SELECT percentile_disc(0.5) WITHIN GROUP (order by cats.tail_length), percentile_disc(0.5) WITHIN GROUP (order by cats.whiskers_length) FROM cats")
+func Median(db *sql.DB, columName string) float32 {
+	rows, err := db.Query(fmt.Sprintf("SELECT percentile_disc(0.5) WITHIN GROUP (order by %s) FROM cats", columName))
+	//rows, err := db.Query("SELECT percentile_disc(0.5) WITHIN GROUP (order by &1)", columName)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	bks := make([]*cats, 0)
+	var ResultMedian float32
 	for rows.Next() {
-		bk := new(cats)
-		err := rows.Scan(&bk.medianTail, &bk.medianWhiskers)
+		err := rows.Scan(&ResultMedian)
 		if err != nil {
 			log.Fatal(err)
 		}
-		bks = append(bks, bk)
 	}
-	if err = rows.Err(); err != nil {
-		log.Fatal(err)
-	}
-
-	for _, bk := range bks {
-		//fmt.Println(bk.medianTail, bk.medianWhiskers)
-		_, err := db.Exec("INSERT INTO cats_stat (tail_length_median, whiskers_length_median) VALUES ($1, $2)", bk.medianTail, bk.medianWhiskers)
-		if err != nil {
-			panic(err)
-		}
-	}
+	return ResultMedian
 }

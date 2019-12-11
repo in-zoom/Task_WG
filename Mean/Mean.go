@@ -2,39 +2,27 @@ package Mean
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"log"
 )
 
-type cats struct {
-	meanTail     float32
-	meanWhiskers float32
-}
-
-func Mean(db *sql.DB) {
-	rows, err := db.Query("SELECT SUM(cats.tail_length) / COUNT(cats.name), SUM(cats.whiskers_length) / COUNT(cats.name) FROM cats")
+func Mean(db *sql.DB, columName string) float32 {
+	//rows, err := db.Query("SELECT SUM (col) / COUNT(cats.name) FROM cats WHERE col = $1", columName)
+	rows, err := db.Query(fmt.Sprintf("SELECT SUM (%s) / COUNT(cats.name) FROM cats", columName))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	bks := make([]*cats, 0)
+	var ResultMean float32
 	for rows.Next() {
-		bk := new(cats)
-		err := rows.Scan(&bk.meanTail, &bk.meanWhiskers)
+		err := rows.Scan(&ResultMean)
 		if err != nil {
 			log.Fatal(err)
 		}
-		bks = append(bks, bk)
 	}
 	if err = rows.Err(); err != nil {
 		log.Fatal(err)
 	}
-
-	for _, bk := range bks {
-		//fmt.Println(bk.meanTail, bk.meanWhiskers)
-		_, err := db.Exec("INSERT INTO cats_stat (tail_length_mean, whiskers_length_mean) VALUES ($1, $2)", bk.meanTail, bk.meanWhiskers)
-		if err != nil {
-			panic(err)
-		}
-	}
+	return ResultMean
 }
