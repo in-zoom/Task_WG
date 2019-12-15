@@ -13,27 +13,24 @@ type cats struct {
 }
 
 func GroupCount(db *sql.DB) {
-	rows, err := db.Query("SELECT color, COUNT(color)  FROM cats GROUP BY color ")
+	rows, err := db.Query("SELECT color, COUNT(color)  FROM cats GROUP BY color")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
-	bks := make([]*cats, 0)
+	groupCount := new(cats)
 	for rows.Next() {
-		bk := new(cats)
-		err := rows.Scan(&bk.color, &bk.quantityColor)
+		err := rows.Scan(&groupCount.color, &groupCount.quantityColor)
 		if err != nil {
 			log.Fatal(err)
 		}
-		bks = append(bks, bk)
 	}
 	if err = rows.Err(); err != nil {
 		log.Fatal(err)
 	}
-	for _, bk := range bks {
-		_, err := db.Exec("INSERT INTO cat_colors_info (color, count) VALUES ($1, $2)", bk.color, bk.quantityColor)
-		if err != nil {
-			panic(err)
-		}
+	ins := "INSERT INTO cat_colors_info (color, count) VALUES ($1, $2)"
+	_, errr := db.Exec(ins, groupCount.color, groupCount.quantityColor)
+	if errr != nil {
+		panic(errr)
 	}
 }
