@@ -1,5 +1,6 @@
 В базе данных есть таблица cats с такой схемой:
-          Table "public.cats"
+          
+          Table "public.cats" 
           
 |     Column      |       Type        |
 |:---             |:---               |
@@ -18,36 +19,29 @@
 Про котов мы знаем некоторую важную информацию, например имя, цвет, длину хвоста и усов.
 
 Цвет котов определен как перечисляемый тип данных:
-
-`` `
+``` 
 CREATE TYPE cat_color AS ENUM (
-  
-  'black',
-  
-  'white',
-  
-  'black & white',
-  
-  'red',
-  
-  'red & white',
-  
-  'red & black & white'
-
+    'black',
+    'white',
+    'black & white',
+    'red',
+    'red & white',
+    'red & black & white'
 );
-`` `
-
+``` 
 Нужно выяснить, сколько котов каждого цвета есть в базe и записать эту информацию в таблицу cat_colors_info:
-
+```
 Table "public.cat_colors_info"
+```
                     
 | Column |   Type    |
 | :---:  |   :---:   |
 | color  | cat_color |
 | count  | integer   |
+```
 Indexes:
     "cat_colors_info_color_key" UNIQUE CONSTRAINT, btree (color)
-
+```
 Должно получиться примерно так:
 
 |        color        | count |
