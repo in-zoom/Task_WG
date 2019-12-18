@@ -1,53 +1,66 @@
 package main
 
 import (
-	"Backend_task_4/init"
-	"fmt"
+	"Backend_task_4/login"
+	"database/sql"
+	"encoding/json"
+	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
 	"net/http"
 )
 
 type cats struct {
-	name           string
-	color          string
-	tailLength     float32
-	whiskersLength float32
+	Name           string  `json:"name"`
+	Color          string  `json:"color"`
+	TailLength     float32 `json:"tail_length"`
+	WhiskersLength float32 `json:"whiskers_length"`
 }
 
 func main() {
-	http.HandleFunc("/cats", index)
-	http.ListenAndServe(":8080", nil)
+	router := httprouter.New()
+	router.GET("/cats", getList)
+	http.ListenAndServe(":8080", router)
 }
 
-func index(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, http.StatusText(405), 405)
+func getList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	var str string
+	if len(r.URL.RawQuery) > 0 {
+		str = r.URL.Query().Get("cats")
+		if str == "" {
+			w.WriteHeader(400)
+			return
+		}
+	}
+	catslist, err := catsList(str)
+	if err != nil {
+		w.WriteHeader(500)
 		return
 	}
-	db := iinit.Init()
-	rows, err := db.Query("SELECT * FROM cats")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	if err = json.NewEncoder(w).Encode(catslist); err != nil {
+		w.WriteHeader(500)
+	}
+}
+func catsList(str string) ([]cats, error) {
+	db := login.Init()
+	var rows *sql.Rows
+	var err error
+	rows, err = db.Query("SELECT * FROM cats")
 	if err != nil {
-		http.Error(w, http.StatusText(500), 500)
-		return
+		return nil, err
 	}
 	defer rows.Close()
 
-	listСats := make([]*cats, 0)
+	list := make([]cats, 0)
+	var cat cats
 	for rows.Next() {
-		cat := new(cats)
-		err := rows.Scan(&cat.name, &cat.color, &cat.tailLength, &cat.whiskersLength)
-		if err != nil {
-			http.Error(w, http.StatusText(500), 500)
-			return
+		if err = rows.Scan(&cat.Name, &cat.Color, &cat.TailLength, &cat.WhiskersLength); err != nil {
+			return nil, err
 		}
-		listСats = append(listСats, cat)
+		list = append(list, cat)
 	}
 	if err = rows.Err(); err != nil {
-		http.Error(w, http.StatusText(500), 500)
-		return
+		return nil, err
 	}
-	for _, cat := range listСats {
-		fmt.Fprintf(w, "%s, %s, %.2f, %.2f\n", cat.name, cat.color, cat.tailLength, cat.whiskersLength)
-	}
-
+	return list, nil
 }

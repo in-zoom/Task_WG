@@ -1,4 +1,4 @@
-package iinit
+package login
 
 import (
 	"database/sql"
