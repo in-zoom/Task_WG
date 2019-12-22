@@ -4,6 +4,7 @@ import (
 	"Backend_task_4/login"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"github.com/julienschmidt/httprouter"
 	_ "github.com/lib/pq"
 	"net/http"
@@ -19,19 +20,22 @@ type cats struct {
 func main() {
 	router := httprouter.New()
 	router.GET("/cats", getList)
+	//router.GET("/cats/:attribute", getList)
 	http.ListenAndServe(":8080", router)
 }
 
 func getList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var str string
+	var str1 string
+	var str2 string
 	if len(r.URL.RawQuery) > 0 {
-		str = r.URL.Query().Get("cats")
-		if str == "" {
+		str1 = r.URL.Query().Get("attribute")
+		str2 = r.URL.Query().Get("order")
+		if str1 == "" || str2 == "" {
 			w.WriteHeader(400)
 			return
 		}
 	}
-	catslist, err := catsList(str)
+	catslist, err := catsList(str1, str2)
 	if err != nil {
 		w.WriteHeader(500)
 		return
@@ -41,11 +45,14 @@ func getList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.WriteHeader(500)
 	}
 }
-func catsList(str string) ([]cats, error) {
+func catsList(str1 string, str2 string) ([]cats, error) {
 	db := login.Init()
 	var rows *sql.Rows
 	var err error
-	rows, err = db.Query("SELECT * FROM cats")
+	if str1 != "" || str2 != "" {
+		param := str1 + " " + str2
+		rows, err = db.Query(fmt.Sprintf("SELECT * FROM cats ORDER BY %s", param))
+	}
 	if err != nil {
 		return nil, err
 	}
