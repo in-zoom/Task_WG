@@ -19,23 +19,29 @@ type cats struct {
 
 func main() {
 	router := httprouter.New()
-	router.GET("/cats", getList)
-	//router.GET("/cats/:attribute", getList)
+	//router.GET("/cats", getList)
+	router.GET("/cats", ggetList)
 	http.ListenAndServe(":8080", router)
 }
 
-func getList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var str1 string
-	var str2 string
+func ggetList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	var param1 string
+	var param2 string
+	var param3 string
+	var param4 string
+
 	if len(r.URL.RawQuery) > 0 {
-		str1 = r.URL.Query().Get("attribute")
-		str2 = r.URL.Query().Get("order")
-		if str1 == "" || str2 == "" {
-			w.WriteHeader(400)
-			return
-		}
+		param1 = r.URL.Query().Get("attribute")
+		param2 = r.URL.Query().Get("order")
+		param3 = r.URL.Query().Get("offset")
+		param4 = r.URL.Query().Get("limit")
+		/*if param1 == "" || param2 == "" || param3 == "" || param4 == "" {
+		m3 == "" || param4 == "" {
+					w.WriteHeader(400)
+					return
+				}*/
 	}
-	catslist, err := catsList(str1, str2)
+	catslist, err := catsList(param1, param2, param3, param4)
 	if err != nil {
 		w.WriteHeader(500)
 		return
@@ -45,13 +51,20 @@ func getList(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.WriteHeader(500)
 	}
 }
-func catsList(str1 string, str2 string) ([]cats, error) {
+func catsList(param1 string, param2 string, param3 string, param4 string) ([]cats, error) {
 	db := login.Init()
 	var rows *sql.Rows
 	var err error
-	if str1 != "" || str2 != "" {
-		param := str1 + " " + str2
+	if param1 == "" && param2 == "" && param3 == "" && param4 == "" {
+		rows, err = db.Query("SELECT * FROM cats")
+	} else if param1 != "" && param2 != "" && param3 == "" && param4 == "" {
+		param := param1 + " " + param2
 		rows, err = db.Query(fmt.Sprintf("SELECT * FROM cats ORDER BY %s", param))
+	} else if param1 == "" && param2 == "" && param3 != "" && param4 != "" {
+		rows, err = db.Query(fmt.Sprintf("SELECT * FROM cats offset %s limit %s", param3, param4))
+	} else if param1 != "" || param2 != "" && param3 != "" || param4 != "" {
+		param := param1 + " " + param2
+		rows, err = db.Query(fmt.Sprintf("SELECT * FROM cats ORDER BY %s offset %s limit %s", param, param3, param4))
 	}
 	if err != nil {
 		return nil, err
