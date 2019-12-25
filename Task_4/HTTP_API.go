@@ -1,7 +1,7 @@
 package main
 
 import (
-	"Backend/Task_4/handlers"
+	"Backend_task_4/handlers"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 )

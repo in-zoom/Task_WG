@@ -1,13 +1,13 @@
 package handlers
 
 import (
-    "encoding/json"
+	"Backend_task_4/validation"
+	"encoding/json"
 	"github.com/julienschmidt/httprouter"
-	"net/http"   
+	"net/http"
 )
 
-
-type Cats struct {
+type cat struct {
 	Name           string  `json:"name"`
 	Color          string  `json:"color"`
 	TailLength     float32 `json:"tail_length"`
@@ -15,18 +15,22 @@ type Cats struct {
 }
 
 func Getlist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var param1 string
-	var param2 string
-	var param3 string
-	var param4 string
+	var attribute, order string
+	//var order string
+	//var param3 string
+	//var param4 string
 
 	if len(r.URL.RawQuery) > 0 {
-		param1 = r.URL.Query().Get("attribute")
-		param2 = r.URL.Query().Get("order")
-		param3 = r.URL.Query().Get("offset")
-		param4 = r.URL.Query().Get("limit")
+		attribute = r.URL.Query().Get("attribute")
+		order = r.URL.Query().Get("order")
+
 	}
-	resultCatslist, err := Catslist(param1, param2, param3, param4)
+	resultparam, errr := validation.WhiteParam(attribute, order)
+	if errr != nil {
+		w.WriteHeader(400)
+		return
+	}
+	resultCatslist, err := сatslist(resultparam)
 	if err != nil {
 		w.WriteHeader(500)
 		return
