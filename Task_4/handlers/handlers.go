@@ -1,13 +1,13 @@
 package handlers
 
 import (
-    "encoding/json"
+	"Backend_task_4/validation"
+	"encoding/json"
 	"github.com/julienschmidt/httprouter"
-	"net/http"   
+	"net/http"
 )
 
-
-type Cats struct {
+type cat struct {
 	Name           string  `json:"name"`
 	Color          string  `json:"color"`
 	TailLength     float32 `json:"tail_length"`
@@ -15,18 +15,37 @@ type Cats struct {
 }
 
 func Getlist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	var param1 string
-	var param2 string
-	var param3 string
-	var param4 string
+	var attribute, order, offset, limit string
+	url := r.URL.Query()
 
 	if len(r.URL.RawQuery) > 0 {
-		param1 = r.URL.Query().Get("attribute")
-		param2 = r.URL.Query().Get("order")
-		param3 = r.URL.Query().Get("offset")
-		param4 = r.URL.Query().Get("limit")
+		attribute = url.Get("attribute")
+		order = url.Get("order")
+		offset = url.Get("offset")
+		limit = url.Get("limit")
+
 	}
-	resultCatslist, err := Catslist(param1, param2, param3, param4)
+	resultAttribute, errr := validation.WhiteAttribute(attribute)
+	if errr != nil {
+		w.WriteHeader(400)
+		return
+	}
+	resultOrder, errr := validation.WhiteOrder(order)
+	if errr != nil {
+		w.WriteHeader(400)
+		return
+	}
+	resultOffset, errrr := validation.WhiteOffset(offset)
+	if errrr != nil {
+		w.WriteHeader(400)
+		return
+	}
+	resultLimit, errrrr := validation.WhiteLimit(limit)
+	if errrrr != nil {
+		w.WriteHeader(400)
+		return
+	}
+	resultCatslist, err := сatslist(resultAttribute, resultOrder, resultOffset, resultLimit)
 	if err != nil {
 		w.WriteHeader(500)
 		return
