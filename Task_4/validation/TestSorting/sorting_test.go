@@ -9,12 +9,7 @@ import (
 var input, expectedResult, actualResult string
 var err error
 
-//_________ТЕСТ ВАЛИДНЫХ ПАРАМЕТРОВ________________________________________________________________________________________________________________________________________________
-
 func TestValidAttribute(t *testing.T) {
-
-	//ФУНКЦИЯ-WhiteAttribute
-
 	input = "name"
 	expectedResult = "ORDER BY name"
 	actualResult, err = validation.WhiteAttribute(input)
@@ -47,8 +42,6 @@ func TestValidAttribute(t *testing.T) {
 	}
 	assert.Equal(t, expectedResult, expectedResult)
 
-	//ФУНКЦИЯ-WhiteOrder
-
 	input = "asc"
 	expectedResult = "asc"
 	actualResult, err = validation.WhiteOrder(input)
@@ -73,180 +66,20 @@ func TestValidAttribute(t *testing.T) {
 	}
 	assert.Equal(t, expectedResult, actualResult)
 }
-
-//_________ТЕСТ НЕВАЛИДНЫХ ПАРАМЕТРОВ____________________________________________________________________________________________________________________________________________
-
 func TestIvalidAttribute(t *testing.T) {
-
-	//ФУНКЦИЯ-WhiteAttribute
-
-	input = " "
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
+	imput := []string{" ", "DROP", "&", "1"}
+	for _, imputCurrentItem := range imput {
+		expectedResult = "Неверный параметр группировки"
+		_, err = validation.WhiteAttribute(imputCurrentItem)
+		if err != nil {
+			t.Error()
+		}
+		assert.Equal(t, expectedResult, err)
+		expectedResult = "Неверный параметр сортировки"
+		_, err = validation.WhiteOrder(imputCurrentItem)
+		if err != nil {
+			t.Error()
+		}
+		assert.Equal(t, expectedResult, err)
 	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "  color"
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "      "
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "DROP"
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "abracadabra"
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "&"
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "%"
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "1"
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "-1"
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "="
-	expectedResult = "Неверный параметр группировки"
-	_, err = validation.WhiteAttribute(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	//ФУНКЦИЯ-WhiteOrder
-
-	input = " "
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "  asc"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "      "
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "DROP"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "abracadabra"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "&"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "%"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "1"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "-1"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "="
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
-
-	input = "/"
-	expectedResult = "Неверный параметр сортировки"
-	_, err = validation.WhiteOrder(input)
-	if err != nil {
-		t.Error()
-	}
-	assert.Equal(t, expectedResult, err)
 }
