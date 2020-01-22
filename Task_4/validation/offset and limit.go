@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func WhiteLimit(limit string) (resultLimit string, err error) {
+func ValidateLimit(limit string) (resultLimit string, err error) {
 	if limit != "" {
 		limitInt, err := strconv.Atoi(limit)
 		if err != nil {
@@ -25,7 +25,7 @@ func WhiteLimit(limit string) (resultLimit string, err error) {
 	}
 	return "", nil
 }
-func WhiteOffset(offset string) (resultOffset string, err error) {
+func ValidateOffset(offset string) (resultOffset string, err error) {
 	if offset != "" {
 		offsetInt, err := strconv.Atoi(offset)
 		if err != nil {

@@ -2,7 +2,7 @@ package validation
 
 import "errors"
 
-func WhiteAttribute(attribute string) (resultParam string, errr error) {
+func ValidateAttribute(attribute string) (resultParam string, errr error) {
 	whiteAttribute := []string{"name", "tail_length", "color"}
 	var resultAttribute string
 	if attribute != "" {
@@ -19,7 +19,7 @@ func WhiteAttribute(attribute string) (resultParam string, errr error) {
 	}
 	return "", nil
 }
-func WhiteOrder(order string) (resultParam string, errr error) {
+func ValidateOrder(order string) (resultParam string, errr error) {
 	whiteOrder := []string{"asc", "desc"}
 	var resultOrder string
 	if order != "" {

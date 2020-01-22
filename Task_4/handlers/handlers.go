@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"Backend_task_4/validation"
+	"Backend/Task_4/validation"
 	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
@@ -25,22 +25,22 @@ func Getlist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		limit = url.Get("limit")
 
 	}
-	resultAttribute, errr := validation.WhiteAttribute(attribute)
+	resultAttribute, errr := validation.ValidateAttribute(attribute)
 	if errr != nil {
 		w.WriteHeader(400)
 		return
 	}
-	resultOrder, errr := validation.WhiteOrder(order)
+	resultOrder, errr := validation.ValidateOrder(order)
 	if errr != nil {
 		w.WriteHeader(400)
 		return
 	}
-	resultOffset, errrr := validation.WhiteOffset(offset)
+	resultOffset, errrr := validation.ValidateOffset(offset)
 	if errrr != nil {
 		w.WriteHeader(400)
 		return
 	}
-	resultLimit, errrrr := validation.WhiteLimit(limit)
+	resultLimit, errrrr := validation.ValidateLimit(limit)
 	if errrrr != nil {
 		w.WriteHeader(400)
 		return
