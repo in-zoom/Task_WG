@@ -1,16 +1,17 @@
 package handlers
 
 import (
-	"Backend_task_4/login"
+	"Backend/task_4/login"
 	"database/sql"
 	_ "github.com/lib/pq"
 )
 
+var err error
+
 func сatslist(attribute string, order string, offset string, limit string) ([]cat, error) {
 	db := login.Init()
 	var rows *sql.Rows
-	var err error
-	query := "SELECT * FROM cats" + " " + attribute + " " + order + " " + offset + " " + limit
+    query := "SELECT * FROM cats" + " " + attribute + " " + order + " " + offset + " " + limit
 	rows, err = db.Query(query)
 
 	if err != nil {
@@ -30,4 +31,14 @@ func сatslist(attribute string, order string, offset string, limit string) ([]c
 		return nil, err
 	}
 	return list, nil
+}
+
+func addNewCat(nameCat string) (err error) {
+	db := login.Init()
+	ins := "INSERT INTO cats (name) VALUES ($1)"
+	_, err = db.Exec(ins, nameCat)
+	if err != nil {
+		return err
+	}
+	return nil
 }

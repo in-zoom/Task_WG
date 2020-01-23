@@ -55,3 +55,23 @@ func Getlist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.WriteHeader(500)
 	}
 }
+
+func Addcat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	var cat cat
+	err := json.NewDecoder(r.Body).Decode(&cat)
+	if err != nil {
+		w.WriteHeader(400)
+		return
+	}
+	resultNameCat, errr := validation.NameValid(cat.Name)
+	if errr != nil {
+		w.WriteHeader(500)
+		return
+	}
+	 errrr := addNewCat(resultNameCat)
+	if errrr != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+}
