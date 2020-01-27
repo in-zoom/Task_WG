@@ -33,10 +33,10 @@ func сatslist(attribute string, order string, offset string, limit string) ([]c
 	return list, nil
 }
 
-func addNewCat(nameCat string) (err error) {
+func addNewCat(nameCat, colorCat string) (err error) {
 	db := login.Init()
-	ins := "INSERT INTO cats (name, color) VALUES ($1)"
-	_, err = db.Exec(ins, nameCat)
+	ins := "INSERT INTO cats (name, color) VALUES ($1, $2)"
+	_, err = db.Exec(ins, nameCat, colorCat)
 	if err != nil {
 		return err
 	}

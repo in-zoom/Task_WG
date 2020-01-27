@@ -60,7 +60,7 @@ func Addcat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var addedCat cat
 	err := json.NewDecoder(r.Body).Decode(&addedCat)
 	if err != nil {
-		w.WriteHeader(400)
+		w.WriteHeader(500)
 		return
 	}
 	resultNameCat, errr := validation.ValidateName(addedCat.Name)
@@ -68,9 +68,14 @@ func Addcat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.WriteHeader(500)
 		return
 	}
-	errrr := addNewCat(resultNameCat)
-	if errrr != nil {
+	resultColorCat, errr := validation.ValidateColor(addedCat.Color)
+	if errr != nil {
 		w.WriteHeader(500)
+		return
+	}
+	errrr := addNewCat(resultNameCat, resultColorCat)
+	if errrr != nil {
+		w.WriteHeader(400)
 		return
 	}
 

@@ -6,6 +6,7 @@ import (
 	"errors"
 	_ "github.com/lib/pq"
 	"strings"
+	"regexp"
 )
 
 func ValidateName(addedNameCat string) (nameCat string, err error) {
@@ -38,4 +39,37 @@ func ValidateName(addedNameCat string) (nameCat string, err error) {
 
 	}
 	return "", errors.New("Введите имя")
+}
+
+func ValidateColor(color string) (resultColor string, err error) {
+	validColor := make([]string, 0)
+	if color != "" {
+		sentenceWord := strings.Split(color, " ")
+		for _, colorName := range sentenceWord {
+			validateListColor := []string{"white", "black", "red", "&"}
+			for _, currentСolor := range validateListColor {
+				if colorName == currentСolor {
+					validColor = append(validColor, colorName)
+				}
+			}
+		}
+		if len(validColor) == 0 {
+			return "", errors.New("Некорректно задан окрас кота")
+		}
+		for _, currentNameColor := range validColor {
+			if resultColor == "" {
+				resultColor += currentNameColor
+			} else {
+				resultColor += " " + currentNameColor
+			}
+		}
+		pattern := `(^[A-Za-z]+$)|(^[A-Za-z]+[\ t \ n \ v \ f \ r]+&+[\ t \ n \ v \ f \ r]+[A-Za-z]+$)|(^[A-Za-z]+[\ t \ n \ v \ f \ r]+&+[\ t \ n \ v \ f \ r]+[A-Za-z]+[\ t \ n \ v \ f \ r]+&+[\ t \ n \ v \ f \ r]+[A-Za-z]+$)`
+		matched, err := regexp.Match(pattern, []byte(resultColor))
+		if matched == false || err != nil {
+			return "", errors.New("Некорректно задан окрас кота")
+		} else {
+			return resultColor, nil
+		}
+	}
+	return "", errors.New("Не задан окрас кота")
 }
