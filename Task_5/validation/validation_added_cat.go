@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/lib/pq"
-	"strings"
 	"regexp"
+	"strings"
 )
 
 func ValidateName(addedNameCat string) (nameCat string, err error) {
