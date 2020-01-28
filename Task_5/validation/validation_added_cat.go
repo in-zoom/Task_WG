@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	_ "github.com/lib/pq"
-	"regexp"
 	"strings"
 )
 
@@ -42,34 +41,26 @@ func ValidateName(addedNameCat string) (nameCat string, err error) {
 }
 
 func ValidateColor(color string) (resultColor string, err error) {
-	validColor := make([]string, 0)
 	if color != "" {
-		sentenceWord := strings.Split(color, " ")
-		for _, colorName := range sentenceWord {
-			validateListColor := []string{"white", "black", "red", "&"}
-			for _, currentСolor := range validateListColor {
-				if colorName == currentСolor {
-					validColor = append(validColor, colorName)
-				}
+		colorSpaceRemoval := strings.TrimSpace(color)
+		lowercaseFlowerNames := strings.ToLower(colorSpaceRemoval)
+		var validColors = []string{"red", "black", "white"}
+		simpleColors := strings.Split(lowercaseFlowerNames, " & ")
+		for _, colorElement := range simpleColors {
+			if notContains(validColors, colorElement) {
+				return "", errors.New("Некорректно задан окрас кота")
 			}
 		}
-		if len(validColor) == 0 {
-			return "", errors.New("Некорректно задан окрас кота")
-		}
-		for _, currentNameColor := range validColor {
-			if resultColor == "" {
-				resultColor += currentNameColor
-			} else {
-				resultColor += " " + currentNameColor
-			}
-		}
-		pattern := `(^[A-Za-z]+$)|(^[A-Za-z]+[\ t \ n \ v \ f \ r]+&+[\ t \ n \ v \ f \ r]+[A-Za-z]+$)|(^[A-Za-z]+[\ t \ n \ v \ f \ r]+&+[\ t \ n \ v \ f \ r]+[A-Za-z]+[\ t \ n \ v \ f \ r]+&+[\ t \ n \ v \ f \ r]+[A-Za-z]+$)`
-		matched, err := regexp.Match(pattern, []byte(resultColor))
-		if matched == false || err != nil {
-			return "", errors.New("Некорректно задан окрас кота")
-		} else {
-			return resultColor, nil
-		}
+		return color, nil
 	}
 	return "", errors.New("Не задан окрас кота")
+}
+
+func notContains(validColors []string, colorElement string) bool {
+	for _, nameColor := range validColors {
+		if nameColor == colorElement {
+			return false
+		}
+	}
+	return true
 }
