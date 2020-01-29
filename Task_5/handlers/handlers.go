@@ -8,10 +8,10 @@ import (
 )
 
 type cat struct {
-	Name           string  `json:"name"`
-	Color          string  `json:"color"`
-	TailLength     float32 `json:"tail_length"`
-	WhiskersLength float32 `json:"whiskers_length"`
+	Name           string `json:"name"`
+	Color          string `json:"color"`
+	TailLength     int    `json:"tail_length"`
+	WhiskersLength int    `json:"whiskers_length"`
 }
 
 func Getlist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -63,16 +63,19 @@ func Addcat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		w.WriteHeader(500)
 		return
 	}
+
 	resultNameCat, errr := validation.ValidateName(addedCat.Name)
 	if errr != nil {
 		w.WriteHeader(500)
 		return
 	}
+
 	resultColorCat, errr := validation.ValidateColor(addedCat.Color)
 	if errr != nil {
 		w.WriteHeader(500)
 		return
 	}
+
 	errrr := addNewCat(resultNameCat, resultColorCat)
 	if errrr != nil {
 		w.WriteHeader(400)

@@ -42,18 +42,24 @@ func ValidateName(addedNameCat string) (nameCat string, err error) {
 
 func ValidateColor(color string) (resultColor string, err error) {
 	if color != "" {
-		colorSpaceRemoval := strings.TrimSpace(color)
-		lowercaseFlowerNames := strings.ToLower(colorSpaceRemoval)
-		var validColors = []string{"red", "black", "white"}
+		lowercaseFlowerNames := prepareColor(color)
 		simpleColors := strings.Split(lowercaseFlowerNames, " & ")
+		var validColors = []string{"red", "black", "white"}
 		for _, colorElement := range simpleColors {
 			if notContains(validColors, colorElement) {
 				return "", errors.New("Некорректно задан окрас кота")
 			}
 		}
-		return color, nil
+		return lowercaseFlowerNames, nil
 	}
 	return "", errors.New("Не задан окрас кота")
+}
+
+func prepareColor(inputColor string) (outputLowercaseFlowerNames string) {
+	colorSpaceRemoval := strings.TrimSpace(inputColor)
+	lowercaseFlowerNames := strings.ToLower(colorSpaceRemoval)
+	return lowercaseFlowerNames
+
 }
 
 func notContains(validColors []string, colorElement string) bool {
