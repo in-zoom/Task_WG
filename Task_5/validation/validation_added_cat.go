@@ -4,6 +4,7 @@ import (
 	"Backend/task_5/login"
 	"database/sql"
 	"errors"
+	"fmt"
 	_ "github.com/lib/pq"
 	"strings"
 )
@@ -69,4 +70,11 @@ func notContains(validColors []string, colorElement string) bool {
 		}
 	}
 	return true
+}
+
+func ValidTailLength(TailLength int) (resultTailLength int, err error) {
+	if TailLength <= 0 {
+		return 0, errors.New("Значение не может быть равно" + " " + fmt.Sprint(TailLength))
+	}
+	return TailLength, nil
 }
