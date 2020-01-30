@@ -75,3 +75,9 @@ func ValidTailLength(TailLength int) (resultTailLength int, err error) {
 	}
 	return TailLength, nil
 }
+func ValidWhiskersLength(WhiskersLength int) (resultWhiskersLength int, err error) {
+	if WhiskersLength <= 0 {
+		return 0, errors.New("Значение не может быть равно" + " " + fmt.Sprint(WhiskersLength))
+	}
+	return WhiskersLength, nil
+}

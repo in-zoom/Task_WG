@@ -82,7 +82,13 @@ func Addcat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		return
 	}
 
-	errrr := addNewCat(resultNameCat, resultColorCat, resultTailLengthCat)
+	resultWhiskersLengthCat, err := validation.ValidWhiskersLength(addedCat.WhiskersLength)
+	if err != nil {
+		w.WriteHeader(500)
+		return
+	}
+
+	errrr := addNewCat(resultNameCat, resultColorCat, resultTailLengthCat, resultWhiskersLengthCat)
 	if errrr != nil {
 		w.WriteHeader(400)
 		return
