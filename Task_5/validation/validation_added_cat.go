@@ -44,14 +44,20 @@ func ValidateName(addedNameCat string) (nameCat string, err error) {
 func ValidateColor(color string) (resultColor string, err error) {
 	if color != "" {
 		lowercaseFlowerNames := prepareColor(color)
-		simpleColors := strings.Split(lowercaseFlowerNames, " & ")
-		var validColors = []string{"red", "black", "white"}
-		for _, colorElement := range simpleColors {
-			if notContains(validColors, colorElement) {
-				return "", errors.New("Некорректно задан окрас кота")
+		var validColors = []string{
+			"black",
+			"white",
+			"black & white",
+			"red",
+			"red & white",
+			"red & black & white"}
+
+		for _, currentСolor := range validColors {
+			if currentСolor == lowercaseFlowerNames {
+				return lowercaseFlowerNames, nil
 			}
 		}
-		return lowercaseFlowerNames, nil
+		return "", errors.New("Некорректно задан окрас кота")
 	}
 	return "", errors.New("Не задан окрас кота")
 }
@@ -61,15 +67,6 @@ func prepareColor(inputColor string) (outputLowercaseFlowerNames string) {
 	lowercaseFlowerNames := strings.ToLower(colorSpaceRemoval)
 	return lowercaseFlowerNames
 
-}
-
-func notContains(validColors []string, colorElement string) bool {
-	for _, nameColor := range validColors {
-		if nameColor == colorElement {
-			return false
-		}
-	}
-	return true
 }
 
 func ValidTailLength(TailLength int) (resultTailLength int, err error) {
