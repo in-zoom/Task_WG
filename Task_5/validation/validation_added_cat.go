@@ -1,21 +1,33 @@
 package validation
 
 import (
-	//"Backend/task_5/login" // раскомментировать для нормальной работы
+	"Backend_task_5/login"
 	"database/sql"
 	"errors"
 	"fmt"
-	_ "github.com/lib/pq"
+	"regexp"
 	"strings"
+  _ "github.com/lib/pq"
 )
 
-func ValidateName(addedNameCat string, db *sql.DB) (nameCat string, err error) { // для тестирования
-//func ValidateName(addedNameCat string) (nameCat string, err error) { // раскомментировать для нормальной работы
-	if addedNameCat != "" {
-		//db := login.Init() // раскомментировать для нормальной работы
+
+
+//func ValidateName(addedNameCat string, db *sql.DB) (nameCat string, err error) { // Для тестирования
+func ValidateName(addedNameCat string) (nameCat string, err error) {
+		db := login.Init()
 		var rows *sql.Rows
-		var err error
-		addNameCat := strings.Title(addedNameCat)
+		addNameCat := prepareName(addedNameCat)
+		
+		if addNameCat == "" {
+		return "", errors.New("Введите имя")
+	    }
+		
+		pattern := `^[A-Za-z]+$`
+		matched, err := regexp.Match(pattern, []byte(addNameCat))
+		if matched == false || err != nil {
+			return "", errors.New("Имя не может содержать цифры, знаки пунктуации, символы ")
+		}
+
 		query := "SELECT name FROM cats WHERE name = " + " " + "'" + addNameCat + "'"
 		rows, err = db.Query(query)
 
@@ -37,14 +49,18 @@ func ValidateName(addedNameCat string, db *sql.DB) (nameCat string, err error) {
 		} else {
 			return "", errors.New("Кот с именем" + " " + nameCatFromExisting + " " + "уже существует")
 		}
+}
 
-	}
-	return "", errors.New("Введите имя")
+func prepareName(imputName string) (outputCatName string) {
+	nameSpaceRemoval := strings.TrimSpace(imputName)
+	nameLowerCase := strings.ToLower(nameSpaceRemoval)
+	formattedCatName := strings.Title(nameLowerCase)
+	return formattedCatName
 }
 
 func ValidateColor(color string) (resultColor string, err error) {
 	lowercaseFlowerNames := prepareColor(color)
-	if color != "" {
+	if lowercaseFlowerNames != "" {
 		var validColors = []string{
 			"black",
 			"white",
@@ -67,7 +83,6 @@ func prepareColor(inputColor string) (outputLowercaseFlowerNames string) {
 	colorSpaceRemoval := strings.TrimSpace(inputColor)
 	lowercaseFlowerNames := strings.ToLower(colorSpaceRemoval)
 	return lowercaseFlowerNames
-
 }
 
 func ValidTailLength(TailLength int) (resultTailLength int, err error) {
@@ -76,6 +91,7 @@ func ValidTailLength(TailLength int) (resultTailLength int, err error) {
 	}
 	return TailLength, nil
 }
+
 func ValidWhiskersLength(WhiskersLength int) (resultWhiskersLength int, err error) {
 	if WhiskersLength <= 0 {
 		return 0, errors.New("Значение не может быть равно" + " " + fmt.Sprint(WhiskersLength))
