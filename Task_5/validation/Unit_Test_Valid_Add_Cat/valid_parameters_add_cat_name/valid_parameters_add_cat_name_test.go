@@ -2,8 +2,8 @@ package validation
 
 import (
 	"Backend/task_5/validation"
+	"github.com/DATA-DOG/go-sqlmock"
 	"testing"
-    "github.com/DATA-DOG/go-sqlmock"
 )
 
 func TestValidNameCat(t *testing.T) {

@@ -2,9 +2,9 @@ package validation
 
 import (
 	"Backend/task_5/validation"
-	"testing"
-    "github.com/DATA-DOG/go-sqlmock"
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestInvalidIfNameCatExists(t *testing.T) {
