@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"Backend/task_5/login"
+	//"Backend/task_5/login" // раскомментировать для нормальной работы
 	"database/sql"
 	"errors"
 	"fmt"
@@ -9,9 +9,10 @@ import (
 	"strings"
 )
 
-func ValidateName(addedNameCat string) (nameCat string, err error) {
+func ValidateName(addedNameCat string, db *sql.DB) (nameCat string, err error) { // для тестирования
+//func ValidateName(addedNameCat string) (nameCat string, err error) { // раскомментировать для нормальной работы
 	if addedNameCat != "" {
-		db := login.Init()
+		//db := login.Init() // раскомментировать для нормальной работы
 		var rows *sql.Rows
 		var err error
 		addNameCat := strings.Title(addedNameCat)
@@ -42,8 +43,8 @@ func ValidateName(addedNameCat string) (nameCat string, err error) {
 }
 
 func ValidateColor(color string) (resultColor string, err error) {
+	lowercaseFlowerNames := prepareColor(color)
 	if color != "" {
-		lowercaseFlowerNames := prepareColor(color)
 		var validColors = []string{
 			"black",
 			"white",
