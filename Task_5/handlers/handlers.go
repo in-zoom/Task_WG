@@ -3,8 +3,9 @@ package handlers
 import (
 	"Backend/task_5/validation"
 	"encoding/json"
-	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"github.com/julienschmidt/httprouter"
+	"fmt"
 )
 
 type cat struct {
@@ -12,6 +13,18 @@ type cat struct {
 	Color          string `json:"color"`
 	TailLength     int    `json:"tail_length"`
 	WhiskersLength int    `json:"whiskers_length"`
+}
+
+type errMessage struct {
+	Message string `json:"message"`
+}
+
+func IndexCatsService(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	if r.Method != "GET" {
+		http.Error(w, http.StatusText(405), 405)
+		return
+	}
+	fmt.Fprintf(w, "Cats Service. Version 0.1")
 }
 
 func Getlist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -25,73 +38,77 @@ func Getlist(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		limit = url.Get("limit")
 
 	}
-	resultAttribute, errr := validation.ValidateAttribute(attribute)
-	if errr != nil {
-		w.WriteHeader(400)
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	resultAttribute, err := validation.ValidateAttribute(attribute)
+	if err != nil {
+		responseError(w, 400, err)
 		return
 	}
-	resultOrder, errr := validation.ValidateOrder(order)
-	if errr != nil {
-		w.WriteHeader(400)
+	resultOrder, err := validation.ValidateOrder(order)
+	if err != nil {
+		responseError(w, 400, err)
 		return
 	}
-	resultOffset, errrr := validation.ValidateOffset(offset)
-	if errrr != nil {
-		w.WriteHeader(400)
+	resultOffset, err := validation.ValidateOffset(offset)
+	if err != nil {
+		responseError(w, 400, err)
 		return
 	}
-	resultLimit, errrrr := validation.ValidateLimit(limit)
-	if errrrr != nil {
-		w.WriteHeader(400)
+	resultLimit, err := validation.ValidateLimit(limit)
+	if err != nil {
+		responseError(w, 400, err)
 		return
 	}
 	resultCatslist, err := сatslist(resultAttribute, resultOrder, resultOffset, resultLimit)
 	if err != nil {
-		w.WriteHeader(500)
+		responseError(w, 500, err)
 		return
 	}
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err = json.NewEncoder(w).Encode(resultCatslist); err != nil {
-		w.WriteHeader(500)
+		responseError(w, 500, err)
 	}
 }
 
-func Addcat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func AddCat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var addedCat cat
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	err := json.NewDecoder(r.Body).Decode(&addedCat)
 	if err != nil {
-		w.WriteHeader(500)
+		responseError(w, 400, err)
 		return
 	}
-
-	resultNameCat, errr := validation.ValidateName(addedCat.Name)
-	if errr != nil {
-		w.WriteHeader(500)
+	resultNameCat, err := validation.ValidateName(addedCat.Name)
+	if err != nil {
+		responseError(w, 400, err)
 		return
 	}
-
-	resultColorCat, errr := validation.ValidateColor(addedCat.Color)
-	if errr != nil {
-		w.WriteHeader(500)
+	resultColorCat, err := validation.ValidateColor(addedCat.Color)
+	if err != nil {
+		responseError(w, 400, err)
 		return
 	}
-
-	resultTailLengthCat, errr := validation.ValidTailLength(addedCat.TailLength)
-	if errr != nil {
-		w.WriteHeader(500)
+	resultTailLengthCat, err := validation.ValidTailLength(addedCat.TailLength)
+	if err != nil {
+		responseError(w, 400, err)
 		return
 	}
-
 	resultWhiskersLengthCat, err := validation.ValidWhiskersLength(addedCat.WhiskersLength)
 	if err != nil {
-		w.WriteHeader(500)
+		responseError(w, 400, err)
+		return
+	}
+	errr := addNewCat(resultNameCat, resultColorCat, resultTailLengthCat, resultWhiskersLengthCat)
+	if errr != nil {
+		responseError(w, 500, err)
 		return
 	}
 
-	errrr := addNewCat(resultNameCat, resultColorCat, resultTailLengthCat, resultWhiskersLengthCat)
-	if errrr != nil {
-		w.WriteHeader(400)
-		return
-	}
+}
 
+func responseError(w http.ResponseWriter, code int, err error) {
+	w.WriteHeader(code)
+	errMessage := errMessage{err.Error()}
+	json.NewEncoder(w).Encode(errMessage)
 }

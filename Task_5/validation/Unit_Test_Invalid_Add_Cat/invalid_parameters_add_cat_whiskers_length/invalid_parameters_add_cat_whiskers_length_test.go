@@ -1,7 +1,7 @@
 package validation
 
 import (
-	"Backend_Task_5/validation"
+	"Backend/task_5/validation"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
