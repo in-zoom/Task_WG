@@ -14,7 +14,12 @@ func TestInvalidIfNameCatExists(t *testing.T) {
 	}
 	defer db.Close()
 
-	input := []string{"Marik", "marik", "  marik", "   marik       "}
+	input := []string{
+		"Marik",
+		"marik",
+		"  marik",
+		"   marik       "}
+
 	expectedResult := "Кот с именем Marik уже существует"
 	for _, currentName := range input {
 		rows := sqlmock.NewRows([]string{"name"}).AddRow("Marik")
@@ -34,7 +39,17 @@ func TestInvalidIfNameCatThereAreCharactersAndNumbers(t *testing.T) {
 	}
 	defer db.Close()
 
-	inputInvalidName := []string{"Marik!", "marik1", "  mar%ik ", "   & marik       ", " /marik", " Marik. ", "5", "?", "+"}
+	inputInvalidName := []string{
+		"Marik!",
+		"marik1",
+		"  mar%ik ",
+		"   & marik       ",
+		" /marik",
+		" Marik. ",
+		"5",
+		"?",
+		"+"}
+
 	expectedResult := "Имя не может содержать цифры, знаки пунктуации, символы"
 	for _, currentInvalidName := range inputInvalidName {
 		_, err := validation.ValidateName(currentInvalidName, db)

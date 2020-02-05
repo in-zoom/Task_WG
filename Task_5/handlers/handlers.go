@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"Backend_task_5/login"
 	"Backend/task_5/validation"
 	"encoding/json"
 	"net/http"
@@ -79,7 +80,7 @@ func AddCat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		responseError(w, 400, err)
 		return
 	}
-	resultNameCat, err := validation.ValidateName(addedCat.Name)
+	resultNameCat, err := validation.ValidateName(addedCat.Name, login.Init())
 	if err != nil {
 		responseError(w, 400, err)
 		return

@@ -1,7 +1,6 @@
 package validation
 
 import (
-	"Backend_task_5/login"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -12,9 +11,7 @@ import (
 
 
 
-//func ValidateName(addedNameCat string, db *sql.DB) (nameCat string, err error) { // Для тестирования
-func ValidateName(addedNameCat string) (nameCat string, err error) {
-		db := login.Init()
+func ValidateName(addedNameCat string, db *sql.DB) (nameCat string, err error) { 
 		var rows *sql.Rows
 		addNameCat := prepareName(addedNameCat)
 		

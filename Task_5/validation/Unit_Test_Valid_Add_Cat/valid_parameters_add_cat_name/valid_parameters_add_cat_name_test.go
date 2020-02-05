@@ -2,8 +2,9 @@ package validation
 
 import (
 	"Backend/task_5/validation"
-	"github.com/DATA-DOG/go-sqlmock"
 	"testing"
+
+	"github.com/DATA-DOG/go-sqlmock"
 )
 
 func TestValidNameCat(t *testing.T) {
@@ -13,7 +14,15 @@ func TestValidNameCat(t *testing.T) {
 	}
 	defer db.Close()
 
-	input := []string{"Marik", "marik", "  marik", "   marik       "}
+	input := []string{
+		"Marik",
+		"marik",
+		"  marik",
+		"   marik       ",
+		"MariK",
+		" MARIK     ",
+		"    maRiK   "}
+
 	for _, currentName := range input {
 		rows := sqlmock.NewRows([]string{"name"})
 		mock.ExpectQuery("SELECT name FROM cats WHERE name = " + " " + "'" + "Marik" + "'").WillReturnRows(rows)
