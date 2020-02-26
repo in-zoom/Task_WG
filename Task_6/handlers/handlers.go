@@ -1,15 +1,12 @@
 package handlers
 
 import (
-	"Backend_task_6/login"
-	"Backend_task_6/validation"
-	"encoding/json"
-	"fmt"
-	"net/http"
-
-	//"github.com/didip/tollbooth/limiter"
-	"github.com/didip/tollbooth/limiter"
 	"github.com/julienschmidt/httprouter"
+	"Backend_task_6/validation"
+	"Backend_task_6/login"
+	"encoding/json"
+	"net/http"
+	"fmt"
 )
 
 type cat struct {
@@ -23,12 +20,6 @@ type errMessage struct {
 	Message string `json:"message"`
 }
 
-type Limiter struct{
-	x int
-	max int64
-   r  *limiter.Limiter
-
-}
 
 func IndexCatsService(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if r.Method != "GET" {
@@ -90,7 +81,7 @@ func AddCat(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		responseError(w, 400, err)
 		return
 	}
-	resultNameCat, err := validation.ValidateName(addedCat.Name, login.Init())
+	resultNameCat, err := validation.ValidateName(addedCat.Name, login.Connect())
 	if err != nil {
 		responseError(w, 400, err)
 		return
